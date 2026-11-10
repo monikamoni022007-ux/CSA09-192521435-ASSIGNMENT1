@@ -1,27 +1,82 @@
 
 public class ParkingFacility {
-    // slots[floor][slot] holds a vehicle number, or null if the slot is free
+
+    // slots[floor][slot] stores vehicle number
+    // null means the slot is free
     private final String[][] slots;
 
+    // Constructor
     public ParkingFacility(int[] slotsPerFloor) {
         slots = new String[slotsPerFloor.length][];
+
         for (int f = 0; f < slotsPerFloor.length; f++) {
             slots[f] = new String[slotsPerFloor[f]];
         }
     }
 
-    /** Returns {floor, slot} of the first free slot, or null if it is full. */
+    // Allocate the first available parking slot
     public int[] allocate(String vehicleNo) {
-        // TODO 1: Search floor by floor and slot by slot; place vehicleNo in the first
-        //         free slot and return {floor, slot}
+
+        for (int f = 0; f < slots.length; f++) {
+            for (int s = 0; s < slots[f].length; s++) {
+
+                if (slots[f][s] == null) {
+                    slots[f][s] = vehicleNo;
+
+                    return new int[]{f, s};
+                }
+            }
+        }
 
         return null;
     }
 
-    /** Frees a slot. Returns false if the position is invalid or already free. */
+    // Release a parking slot
     public boolean release(int floor, int slot) {
-        // TODO 2: Validate floor and slot, free the slot and return true; otherwise
-        //         return false
 
+        // Validate floor and slot
+        if (floor < 0 || floor >= slots.length) {
+            return false;
+        }
+
+        if (slot < 0 || slot >= slots[floor].length) {
+            return false;
+        }
+
+        // Check whether slot is already free
+        if (slots[floor][slot] == null) {
+            return false;
+        }
+
+        // Release the slot
+        slots[floor][slot] = null;
+
+        return true;
+    }
+
+    // Main method
+    public static void main(String[] args) {
+
+        ParkingFacility p =
+            new ParkingFacility(new int[]{2, 1});
+
+        System.out.println(java.util.Arrays.toString(
+            p.allocate("TN01AB1234")));
+
+        System.out.println(java.util.Arrays.toString(
+            p.allocate("TN02CD5678")));
+
+        System.out.println(java.util.Arrays.toString(
+            p.allocate("TN03EF9999")));
+
+        System.out.println(p.allocate("TN04GH4444"));
+
+        System.out.println(
+            p.release(0, 1) + " " +
+            p.release(0, 1) + " " +
+            p.release(5, 0));
+
+        System.out.println(java.util.Arrays.toString(
+            p.allocate("TN04GH4444")));
     }
 }
